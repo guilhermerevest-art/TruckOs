@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { WhatsAppInbox } from './WhatsAppInbox';
-import { MessageCircle, Wifi, WifiOff } from 'lucide-react';
+import { MessageCircle, Wifi, WifiOff, Bot } from 'lucide-react';
+import Link from 'next/link';
 
 export default async function WhatsAppPage() {
   const supabase = await createClient();
@@ -50,6 +51,9 @@ export default async function WhatsAppPage() {
           {instance?.phone_e164 && (
             <span className="text-xs text-slate-500">{instance.phone_e164}</span>
           )}
+          <Link href="/app/whatsapp/agente" className="btn-secondary">
+            <Bot className="h-4 w-4" /> Agente IA
+          </Link>
         </div>
       </div>
 

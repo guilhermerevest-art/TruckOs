@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { formatBRL } from '@/lib/utils';
-import { ArrowUpRight, ArrowDownRight, Wallet, AlertCircle, FileArchive } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Wallet, AlertCircle, FileArchive, CreditCard } from 'lucide-react';
 
 export default async function FinanceiroPage() {
   const supabase = await createClient();
@@ -38,6 +38,12 @@ export default async function FinanceiroPage() {
       .select('amount')
       .eq('status', 'vencida'),
   ]);
+
+  const { data: financingRequests } = await supabase
+    .from('financing_requests')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(10);
 
   const totalReceber =
     (invoicesOpen ?? []).reduce((acc, i) => acc + Number(i.amount), 0);
@@ -181,6 +187,50 @@ export default async function FinanceiroPage() {
                   <tr>
                     <td colSpan={4} className="px-4 py-8 text-center text-slate-500">
                       Nenhuma conta em aberto
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* TruckOS Financia */}
+        <div>
+          <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-slate-900">
+            <CreditCard className="h-5 w-5 text-sky-600" /> TruckOS Financia — solicitações
+          </h2>
+          <p className="mb-2 text-xs text-amber-700">
+            Simulador de parcelamento (pendente de integração com parceiro de crédito regulado) —
+            valores abaixo são pedidos de interesse do cliente, ainda não são crédito aprovado.
+          </p>
+          <div className="overflow-hidden rounded-xl border bg-white shadow-sm">
+            <table className="w-full text-sm">
+              <thead className="border-b bg-slate-50 text-left text-xs uppercase text-slate-500">
+                <tr>
+                  <th className="px-4 py-3">Cliente</th>
+                  <th className="px-4 py-3 text-right">Valor</th>
+                  <th className="px-4 py-3">Parcelas</th>
+                  <th className="px-4 py-3">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {financingRequests?.map(f => (
+                  <tr key={f.id} className="hover:bg-slate-50">
+                    <td className="px-4 py-3 font-medium">{f.customer_name ?? '—'}</td>
+                    <td className="px-4 py-3 text-right font-semibold">{formatBRL(Number(f.amount))}</td>
+                    <td className="px-4 py-3 text-xs text-slate-600">
+                      {f.installments}x {formatBRL(Number(f.simulated_installment_value))}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="badge badge-neutral">{f.status}</span>
+                    </td>
+                  </tr>
+                ))}
+                {!financingRequests?.length && (
+                  <tr>
+                    <td colSpan={4} className="px-4 py-8 text-center text-slate-500">
+                      Nenhuma solicitação ainda
                     </td>
                   </tr>
                 )}

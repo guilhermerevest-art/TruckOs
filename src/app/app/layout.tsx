@@ -15,6 +15,13 @@ import {
   ShoppingCart,
   Receipt,
   UsersRound,
+  Radar,
+  CalendarClock,
+  ShieldCheck,
+  CircleDot,
+  Building2,
+  AlertTriangle,
+  Store,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { HelperWidget } from '@/components/Helper/Tour';
@@ -51,6 +58,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     { href: '/app/compras', icon: ShoppingCart, label: 'Compras' },
     { href: '/app/vendas', icon: Receipt, label: 'Vendas balcão' },
     { href: '/app/pm', icon: Wrench, label: 'Preventiva' },
+    { href: '/app/radar', icon: Radar, label: 'Radar de Recompra' },
+    { href: '/app/agenda', icon: CalendarClock, label: 'Agenda' },
+    { href: '/app/garantias', icon: ShieldCheck, label: 'Garantias' },
+    { href: '/app/pneus', icon: CircleDot, label: 'Pneus' },
+    { href: '/app/grupo', icon: Building2, label: 'Grupo / Rede' },
+    { href: '/app/socorro', icon: AlertTriangle, label: 'Socorro' },
+    { href: '/app/marketplace', icon: Store, label: 'Marketplace' },
     { href: '/app/equipe', icon: UsersRound, label: 'Equipe' },
     { href: '/app/whatsapp', icon: MessageCircle, label: 'WhatsApp' },
     { href: '/app/financeiro', icon: Wallet, label: 'Financeiro' },

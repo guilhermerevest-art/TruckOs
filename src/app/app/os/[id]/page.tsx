@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { KANBAN_PHASES, formatBRL } from '@/lib/utils';
-import { ArrowLeft, ExternalLink, Wrench, Clock, Printer, Tag, Camera } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Wrench, Clock, Printer, Tag, Camera, ClipboardCheck } from 'lucide-react';
 import { PhaseMoveButtons } from './PhaseMoveButtons';
 import { WODetailClient } from './WODetailClient';
 import { PhotoCapture } from '@/components/PhotoCapture';
@@ -119,6 +119,9 @@ export default async function WODetailPage({
             </Link>
             <Link href={`/app/os/${wo.id}/orcamento-foto`} className="btn-secondary">
               <Camera className="h-4 w-4" /> Orcamento por foto
+            </Link>
+            <Link href={`/app/os/${wo.id}/inspecao`} className="btn-secondary">
+              <ClipboardCheck className="h-4 w-4" /> Inspecao (DVI)
             </Link>
             {!quotes.length && (
               <Link

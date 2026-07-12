@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/client';
 import { formatBRL } from '@/lib/utils';
 import { Check, X, MessageCircle, Truck, Clock } from 'lucide-react';
 import { PublicApproveForm } from './PublicApproveForm';
+import { FinanceSimulator } from './FinanceSimulator';
 
 export default async function AprovarPage({
   params,
@@ -85,6 +86,10 @@ export default async function AprovarPage({
             expired={expired}
           />
         </section>
+
+        {(q.status === 'sent' || q.status === 'viewed') && !expired && (
+          <FinanceSimulator token={token} total={q.total} customerName={q.customer_name} />
+        )}
 
         <section className="rounded-xl border bg-white p-4 shadow-sm">
           <a

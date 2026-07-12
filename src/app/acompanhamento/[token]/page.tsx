@@ -2,6 +2,7 @@
 // Chama funcoes SECURITY DEFINER do banco que retornam dados filtrados
 import { createClient } from '@/lib/supabase/client';
 import { Clock, CheckCircle2, Truck, MessageCircle } from 'lucide-react';
+import { InspecaoPublica } from './InspecaoPublica';
 
 type StatusData = {
   number: number;
@@ -42,6 +43,9 @@ export default async function AcompanhamentoPage({
     p_token: token,
   });
   const { data: timeline } = await supabase.rpc('public_work_order_timeline', {
+    p_token: token,
+  });
+  const { data: inspection } = await supabase.rpc('public_work_order_inspection', {
     p_token: token,
   });
 
@@ -160,6 +164,9 @@ export default async function AcompanhamentoPage({
             </div>
           )}
         </section>
+
+        {/* Inspecao (DVI) */}
+        {!!inspection?.length && <InspecaoPublica token={token} items={inspection} />}
 
         {/* Acao */}
         <section className="rounded-xl border bg-white p-4 shadow-sm">
