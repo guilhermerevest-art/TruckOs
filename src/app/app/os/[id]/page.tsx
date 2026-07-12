@@ -2,10 +2,11 @@ import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { KANBAN_PHASES, formatBRL } from '@/lib/utils';
-import { ArrowLeft, ExternalLink, Wrench, Clock, Printer, Tag } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Wrench, Clock, Printer, Tag, Camera } from 'lucide-react';
 import { PhaseMoveButtons } from './PhaseMoveButtons';
 import { WODetailClient } from './WODetailClient';
 import { PhotoCapture } from '@/components/PhotoCapture';
+import { LaudoNarrado } from '@/components/LaudoNarrado';
 
 export default async function WODetailPage({
   params,
@@ -29,6 +30,12 @@ export default async function WODetailPage({
     .single();
 
   if (!wo) notFound();
+
+  const { data: reports } = await supabase
+    .from('wo_reports')
+    .select('id, laudo_tecnico, laudo_cliente, created_at')
+    .eq('work_order_id', id)
+    .order('created_at', { ascending: false });
 
   const publicUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/acompanhamento/${wo.public_token}`;
   const currentPhase = KANBAN_PHASES.find(p => p.key === wo.status);
@@ -110,6 +117,9 @@ export default async function WODetailPage({
             >
               <Tag className="h-4 w-4" /> Etiqueta patio
             </Link>
+            <Link href={`/app/os/${wo.id}/orcamento-foto`} className="btn-secondary">
+              <Camera className="h-4 w-4" /> Orcamento por foto
+            </Link>
             {!quotes.length && (
               <Link
                 href={`/app/orcamentos/novo?wo_id=${wo.id}`}
@@ -155,6 +165,12 @@ export default async function WODetailPage({
             <h2 className="mb-3 text-lg font-bold text-slate-900">Fotos e midia</h2>
             <PhotoCapture workOrderId={wo.id} kind="foto_servico" />
           </div>
+
+          <LaudoNarrado
+            workOrderId={wo.id}
+            vehicleSummary={vehicle ? `${vehicle.plate} — ${vehicle.brand} ${vehicle.model}` : ''}
+            initialReports={reports ?? []}
+          />
 
           {/* Secoes de servico */}
           <div className="rounded-xl border bg-white p-5 shadow-sm">

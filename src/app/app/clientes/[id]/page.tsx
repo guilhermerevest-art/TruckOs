@@ -110,7 +110,7 @@ export default async function CustomerDetailPage({
 
             {customer.tags?.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-1 border-t pt-3">
-                {customer.tags.map(t => (
+                {customer.tags.map((t: string) => (
                   <span key={t} className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-700">
                     {t}
                   </span>
@@ -133,10 +133,11 @@ export default async function CustomerDetailPage({
               </Link>
             </div>
             <div className="space-y-2">
-              {customer.vehicles?.map(v => (
-                <div
+              {customer.vehicles?.map((v: any) => (
+                <Link
                   key={v.id}
-                  className="flex items-center justify-between rounded-lg border bg-slate-50 p-3"
+                  href={`/app/veiculos/${v.id}`}
+                  className="flex items-center justify-between rounded-lg border bg-slate-50 p-3 hover:bg-slate-100"
                 >
                   <div className="flex items-center gap-3">
                     <Truck className="h-5 w-5 text-slate-500" />
@@ -151,7 +152,7 @@ export default async function CustomerDetailPage({
                     <div className="text-slate-500">Hodometro</div>
                     <div className="font-semibold">{(v.odometer_km ?? 0).toLocaleString('pt-BR')} km</div>
                   </div>
-                </div>
+                </Link>
               ))}
               {!customer.vehicles?.length && (
                 <div className="rounded-lg border-2 border-dashed p-6 text-center text-sm text-slate-500">
@@ -208,7 +209,7 @@ export default async function CustomerDetailPage({
           <div className="mt-4 rounded-xl border bg-white p-5 shadow-sm">
             <h3 className="mb-3 font-bold text-slate-900">Contatos</h3>
             <div className="space-y-2">
-              {customer.contacts?.map(ct => (
+              {customer.contacts?.map((ct: any) => (
                 <div key={ct.id} className="rounded-lg bg-slate-50 p-2 text-sm">
                   <div className="font-semibold">{ct.name}</div>
                   <div className="text-xs text-slate-500">{ct.role}</div>

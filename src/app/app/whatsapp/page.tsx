@@ -5,7 +5,7 @@ import { MessageCircle, Wifi, WifiOff } from 'lucide-react';
 export default async function WhatsAppPage() {
   const supabase = await createClient();
 
-  const [{ data: instance }, { data: conversations }] = await Promise.all([
+  const [{ data: instance }, { data: conversationRows }] = await Promise.all([
     supabase
       .from('wa_instances')
       .select('id, status, phone_e164, last_seen_at')
@@ -18,6 +18,13 @@ export default async function WhatsAppPage() {
       .order('last_message_at', { ascending: false })
       .limit(50),
   ]);
+
+  // Supabase infere relacoes embutidas como array sem tipos gerados do banco;
+  // em N:1 (conversa -> customer) o retorno em runtime e um objeto unico.
+  const conversations = (conversationRows ?? []).map((r: any) => ({
+    ...r,
+    customer: Array.isArray(r.customer) ? (r.customer[0] ?? null) : r.customer,
+  }));
 
   return (
     <div className="flex h-screen flex-col">

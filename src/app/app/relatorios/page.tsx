@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
-import { BarChart3, TrendingUp, Star, Users, ClipboardCheck, Wrench } from 'lucide-react';
+import { BarChart3, TrendingUp, Star, Users, ClipboardCheck, Wrench, Gauge } from 'lucide-react';
+import Link from 'next/link';
 import { formatBRL } from '@/lib/utils';
 
 export default async function RelatoriosPage() {
@@ -71,9 +72,19 @@ export default async function RelatoriosPage() {
 
   return (
     <div className="p-6 lg:p-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Relatorios</h1>
-        <p className="text-sm text-slate-500">Visao geral do mes</p>
+      <div className="mb-6 flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Relatorios</h1>
+          <p className="text-sm text-slate-500">Visao geral do mes</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/app/relatorios/margem" className="btn-secondary">
+            <Gauge className="h-4 w-4" /> Custo real da OS
+          </Link>
+          <Link href="/app/relatorios/benchmark" className="btn-secondary">
+            <BarChart3 className="h-4 w-4" /> Benchmark
+          </Link>
+        </div>
       </div>
 
       {/* KPIs */}

@@ -3,6 +3,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { redirect } from 'next/navigation';
 import { Building2, Users, Plug, FileText } from 'lucide-react';
 import Link from 'next/link';
+import { TvLinkCard } from './TvLinkCard';
 
 export default async function AdminPage() {
   const supabase = await createClient();
@@ -23,7 +24,7 @@ export default async function AdminPage() {
 
   const { data: tenant } = await supabase
     .from('tenants')
-    .select('id, name, slug, cnpj, brand_color, status, plan, trial_ends_at')
+    .select('id, name, slug, cnpj, brand_color, status, plan, trial_ends_at, tv_token')
     .single();
 
   const { data: members } = await supabase
@@ -128,6 +129,8 @@ export default async function AdminPage() {
             Convite de equipe via /signup (mesmo email = novo membro no tenant).
           </p>
         </div>
+
+        <TvLinkCard initialToken={tenant?.tv_token ?? null} />
 
         {/* Integracoes */}
         <div className="rounded-xl border bg-white p-5 shadow-sm lg:col-span-2">

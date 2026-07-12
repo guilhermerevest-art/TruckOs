@@ -58,7 +58,7 @@ export default async function QuoteDetailPage({
           <div className="rounded-xl border bg-white p-6 shadow-sm">
             <h2 className="mb-4 text-lg font-bold text-slate-900">Itens do orcamento</h2>
             <div className="divide-y">
-              {quote.items?.map(it => (
+              {quote.items?.map((it: any) => (
                 <div key={it.id} className="flex items-center justify-between py-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
