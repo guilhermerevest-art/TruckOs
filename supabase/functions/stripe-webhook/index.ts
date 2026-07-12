@@ -5,7 +5,7 @@ import Stripe from 'https://esm.sh/stripe@17?target=denonext';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
-  apiVersion: '2024-09-30.acacia',
+  apiVersion: '2025-02-24.acacia',
   httpClient: Stripe.createFetchHttpClient(),
 });
 
