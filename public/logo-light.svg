@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60" fill="none">
+  <defs>
+    <linearGradient id="brand" x1="0" y1="0" x2="240" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0EA5E9"/>
+      <stop offset="1" stop-color="#0369A1"/>
+    </linearGradient>
+  </defs>
+  <!-- Icon -->
+  <g transform="translate(8, 8)">
+    <rect width="44" height="44" rx="10" fill="url(#brand)"/>
+    <path d="M8 30 L8 22 L26 22 L31 27 L31 38 L8 38 Z" fill="#FFFFFF"/>
+    <rect x="31" y="22" width="10" height="16" fill="#FFFFFF"/>
+    <rect x="8" y="33" width="33" height="2" fill="#FBBF24"/>
+    <circle cx="14" cy="40" r="3" fill="#0F172A"/>
+    <circle cx="36" cy="40" r="3" fill="#0F172A"/>
+  </g>
+  <!-- Wordmark -->
+  <text x="62" y="32" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="800" fill="#0F172A">Truck</text>
+  <text x="125" y="32" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="800" fill="#0EA5E9">OS</text>
+  <text x="62" y="48" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="500" fill="#64748B" letter-spacing="1">GESTAO PARA OFICINAS</text>
+</svg>

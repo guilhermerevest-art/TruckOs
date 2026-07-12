@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
+  <!-- TruckOS Logo: Caminhão estilizado em movimento com circuito -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0EA5E9"/>
+      <stop offset="1" stop-color="#0369A1"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="0" y2="256" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FBBF24"/>
+      <stop offset="1" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Fundo arredondado -->
+  <rect width="256" height="256" rx="56" fill="url(#bg)"/>
+
+  <!-- "Estrada" embaixo -->
+  <rect x="32" y="180" width="192" height="6" rx="3" fill="#FFFFFF" opacity="0.25"/>
+  <rect x="32" y="180" width="192" height="6" rx="3" fill="#FFFFFF" opacity="0.5" transform="translate(0, 0)"/>
+
+  <!-- Cabine do caminhao (frente) -->
+  <path d="M48 140 L48 96 L120 96 L140 120 L140 180 L48 180 Z" fill="#FFFFFF"/>
+  <path d="M48 96 L120 96 L140 120 L96 120 Z" fill="#FFFFFF" opacity="0.7"/>
+
+  <!-- Janela -->
+  <rect x="62" y="106" width="50" height="22" rx="3" fill="url(#bg)"/>
+  <rect x="62" y="106" width="50" height="11" rx="3" fill="#FFFFFF" opacity="0.3"/>
+
+  <!-- Carroceria (carga) -->
+  <rect x="140" y="100" width="76" height="80" rx="4" fill="#FFFFFF"/>
+  <rect x="140" y="100" width="76" height="80" rx="4" fill="url(#accent)" opacity="0.15"/>
+
+  <!-- Linhas na carroceria (simulam carga/conteiner) -->
+  <line x1="166" y1="100" x2="166" y2="180" stroke="url(#bg)" stroke-width="2" opacity="0.3"/>
+  <line x1="190" y1="100" x2="190" y2="180" stroke="url(#bg)" stroke-width="2" opacity="0.3"/>
+
+  <!-- Faixa amarela do logo -->
+  <rect x="48" y="148" width="168" height="8" fill="url(#accent)"/>
+
+  <!-- Rodas -->
+  <circle cx="76" cy="186" r="14" fill="#0F172A"/>
+  <circle cx="76" cy="186" r="6" fill="#94A3B8"/>
+  <circle cx="180" cy="186" r="14" fill="#0F172A"/>
+  <circle cx="180" cy="186" r="6" fill="#94A3B8"/>
+
+  <!-- Linhas de velocidade (movimento) -->
+  <path d="M16 80 L40 80" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+  <path d="M8 100 L36 100" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+  <path d="M16 120 L40 120" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- "Circuito" no topo (representa digital/tecnologia) -->
+  <circle cx="200" cy="56" r="4" fill="url(#accent)"/>
+  <path d="M184 56 L196 56 M200 40 L200 52 M216 56 L200 56" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <circle cx="184" cy="56" r="2" fill="#FFFFFF" opacity="0.8"/>
+  <circle cx="216" cy="56" r="2" fill="#FFFFFF" opacity="0.8"/>
+</svg>
