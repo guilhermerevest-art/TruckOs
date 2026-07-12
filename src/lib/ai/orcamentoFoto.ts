@@ -3,9 +3,15 @@ import Anthropic from '@anthropic-ai/sdk';
 // Orcamento por foto: a IA sugere, o consultor sempre confirma (ver PhotoQuoteDraft).
 // Nada aqui grava no orcamento sozinho.
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-});
+// Instancia lazy: evita quebrar o build quando ANTHROPIC_API_KEY
+// ainda nao esta configurada nas env vars (so roda em request-time).
+let client: Anthropic | null = null;
+function getClient() {
+  if (!client) {
+    client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
+  }
+  return client;
+}
 
 export type PartCatalogItem = {
   id: string;
@@ -61,7 +67,7 @@ export async function analyzePhotoForQuote(params: {
     .map(p => `${p.id} | ${p.sku ?? '-'} | ${p.description} | ${p.category ?? '-'}`)
     .join('\n');
 
-  const response = await client.messages.create({
+  const response = await getClient().messages.create({
     model: 'claude-opus-4-8',
     max_tokens: 1024,
     system: SYSTEM_PROMPT,

@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { formatBRL } from '@/lib/utils';
-import { ArrowUpRight, ArrowDownRight, Wallet, AlertCircle } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Wallet, AlertCircle, FileArchive } from 'lucide-react';
 
 export default async function FinanceiroPage() {
   const supabase = await createClient();
@@ -55,6 +55,9 @@ export default async function FinanceiroPage() {
           <h1 className="text-2xl font-bold text-slate-900">Financeiro</h1>
           <p className="text-sm text-slate-500">Contas a receber, pagar e fluxo de caixa</p>
         </div>
+        <Link href="/app/financeiro/exportacao" className="btn-secondary">
+          <FileArchive className="h-4 w-4" /> Exportar pro contador
+        </Link>
       </div>
 
       {/* KPIs */}

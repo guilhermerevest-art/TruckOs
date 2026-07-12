@@ -14,12 +14,14 @@ import {
   Settings,
   ShoppingCart,
   Receipt,
+  UsersRound,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { HelperWidget } from '@/components/Helper/Tour';
 import { ToastProvider } from '@/components/ui/Toast';
 import { SearchPalette } from '@/components/SearchPalette';
 import { SWRegister } from '@/components/SWRegister';
+import { SandboxBanner } from '@/components/SandboxBanner';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -30,7 +32,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const { data: tenant } = await supabase
     .from('tenants')
-    .select('id,name,slug,status,plan,brand_color')
+    .select('id,name,slug,status,plan,brand_color,is_sandbox')
     .single();
 
   async function signOut() {
@@ -49,6 +51,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     { href: '/app/compras', icon: ShoppingCart, label: 'Compras' },
     { href: '/app/vendas', icon: Receipt, label: 'Vendas balcão' },
     { href: '/app/pm', icon: Wrench, label: 'Preventiva' },
+    { href: '/app/equipe', icon: UsersRound, label: 'Equipe' },
     { href: '/app/whatsapp', icon: MessageCircle, label: 'WhatsApp' },
     { href: '/app/financeiro', icon: Wallet, label: 'Financeiro' },
     { href: '/app/relatorios', icon: BarChart3, label: 'Relatorios' },
@@ -93,7 +96,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </div>
         </aside>
 
-        <main className="flex-1 overflow-y-auto">{children}</main>
+        <main className="flex flex-1 flex-col overflow-y-auto">
+          {tenant?.is_sandbox && <SandboxBanner />}
+          <div className="flex-1">{children}</div>
+        </main>
 
         {/* Floating widgets */}
         <SearchPalette />

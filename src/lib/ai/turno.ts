@@ -3,9 +3,15 @@ import Anthropic from '@anthropic-ai/sdk';
 // Modo Passagem de Turno: resumo de fim de dia a partir de fatos ja
 // apurados no banco (nao inventa nada — a IA so escreve a introducao).
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-});
+// Instancia lazy: evita quebrar o build quando ANTHROPIC_API_KEY
+// ainda nao esta configurada nas env vars (so roda em request-time).
+let client: Anthropic | null = null;
+function getClient() {
+  if (!client) {
+    client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
+  }
+  return client;
+}
 
 export type ShiftFacts = {
   tenantName: string;
@@ -29,7 +35,7 @@ atencao sem alarmismo. Nao liste os itens (a lista completa vem depois, separada
 `.trim();
 
   try {
-    const response = await client.messages.create({
+    const response = await getClient().messages.create({
       model: 'claude-opus-4-8',
       max_tokens: 200,
       messages: [{ role: 'user', content: prompt }],

@@ -4,9 +4,15 @@ import Anthropic from '@anthropic-ai/sdk';
 // navegador via Web Speech API) num laudo estruturado — versao tecnica
 // para o arquivo e versao em linguagem simples para o cliente.
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-});
+// Instancia lazy: evita quebrar o build quando ANTHROPIC_API_KEY
+// ainda nao esta configurada nas env vars (so roda em request-time).
+let client: Anthropic | null = null;
+function getClient() {
+  if (!client) {
+    client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
+  }
+  return client;
+}
 
 const SYSTEM_PROMPT = `
 Voce estrutura laudos tecnicos de oficina de caminhoes a partir do relato falado do mecanico.
@@ -22,7 +28,7 @@ igualmente conciso em vez de inventar detalhes.
 `.trim();
 
 export async function generateLaudo(transcript: string, vehicleSummary: string) {
-  const response = await client.messages.create({
+  const response = await getClient().messages.create({
     model: 'claude-opus-4-8',
     max_tokens: 800,
     system: SYSTEM_PROMPT,

@@ -4,11 +4,20 @@ import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { NextResponse } from 'next/server';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-02-24.acacia',
-});
+// Instancia lazy: evita quebrar o build quando STRIPE_SECRET_KEY
+// ainda nao esta configurada nas env vars (a rota so roda em request-time).
+function getStripe() {
+  return new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: '2025-02-24.acacia',
+  });
+}
 
 export async function POST(req: Request) {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return NextResponse.json({ error: 'stripe_not_configured' }, { status: 503 });
+  }
+  const stripe = getStripe();
+
   const { plan } = await req.json();
   const supabase = await createClient();
   const {
