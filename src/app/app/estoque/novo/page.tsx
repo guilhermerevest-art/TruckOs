@@ -1,89 +1,120 @@
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { redirect } from 'next/navigation';
+import { AlertTriangle } from 'lucide-react';
 
-export default async function NewPartPage() {
+export default async function NewPartPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const { error: errorMessage } = await searchParams;
+
   async function create(formData: FormData) {
     'use server';
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) redirect('/login');
+    try {
+      const supabase = await createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) redirect('/login');
 
-    const admin = createAdminClient();
-    const { data: membership } = await admin
-      .from('tenant_members')
-      .select('tenant_id')
-      .eq('user_id', user.id)
-      .eq('active', true)
-      .limit(1)
-      .single();
-    if (!membership) throw new Error('tenant_not_found');
-    const tenant = { id: membership.tenant_id };
-
-    const salePrice = parseFloat(String(formData.get('sale_price') ?? '0')) || 0;
-    const avgCost = parseFloat(String(formData.get('avg_cost') ?? '0')) || 0;
-    const margin = salePrice > 0 ? ((salePrice - avgCost) / salePrice) * 100 : 0;
-
-    const { data: part, error } = await admin
-      .from('parts')
-      .insert({
-        tenant_id: tenant.id,
-        sku: formData.get('sku'),
-        barcode: formData.get('barcode') || null,
-        description: formData.get('description'),
-        brand: formData.get('brand') || null,
-        category: formData.get('category') || null,
-        unit: formData.get('unit') || 'UN',
-        min_qty: parseFloat(String(formData.get('min_qty') ?? '0')) || 0,
-        max_qty: parseFloat(String(formData.get('max_qty') ?? '0')) || 0,
-        avg_cost: avgCost,
-        sale_price: salePrice,
-        margin_pct: margin,
-        location: formData.get('location') || null,
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-
-    // Cria saldo inicial no warehouse padrao
-    const initialQty = parseFloat(String(formData.get('initial_qty') ?? '0')) || 0;
-    if (initialQty > 0) {
-      const { data: warehouse } = await admin
-        .from('warehouses')
-        .select('id')
-        .eq('tenant_id', tenant.id)
+      const admin = createAdminClient();
+      const { data: membership } = await admin
+        .from('tenant_members')
+        .select('tenant_id')
+        .eq('user_id', user.id)
+        .eq('active', true)
         .limit(1)
         .single();
-      if (warehouse) {
-        await admin.from('stock_balances').insert({
+      if (!membership) {
+        redirect(
+          '/app/estoque/novo?error=' +
+            encodeURIComponent('Não encontramos uma oficina ativa vinculada à sua conta. Saia e entre novamente ou fale com o suporte.'),
+        );
+      }
+      const tenant = { id: membership.tenant_id };
+
+      const salePrice = parseFloat(String(formData.get('sale_price') ?? '0')) || 0;
+      const avgCost = parseFloat(String(formData.get('avg_cost') ?? '0')) || 0;
+      const margin = salePrice > 0 ? ((salePrice - avgCost) / salePrice) * 100 : 0;
+
+      const { data: part, error } = await admin
+        .from('parts')
+        .insert({
           tenant_id: tenant.id,
-          warehouse_id: warehouse.id,
-          part_id: part.id,
-          qty: initialQty,
-        });
-        if (avgCost > 0) {
-          await admin.from('stock_moves').insert({
+          sku: formData.get('sku'),
+          barcode: formData.get('barcode') || null,
+          description: formData.get('description'),
+          brand: formData.get('brand') || null,
+          category: formData.get('category') || null,
+          unit: formData.get('unit') || 'UN',
+          min_qty: parseFloat(String(formData.get('min_qty') ?? '0')) || 0,
+          max_qty: parseFloat(String(formData.get('max_qty') ?? '0')) || 0,
+          avg_cost: avgCost,
+          sale_price: salePrice,
+          margin_pct: margin,
+          location: formData.get('location') || null,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Erro ao criar peca:', error);
+        const friendly = error.code === '23505' ? 'Já existe uma peça com esse SKU.' : 'Não foi possível salvar a peça. Confira os dados e tente de novo.';
+        redirect('/app/estoque/novo?error=' + encodeURIComponent(friendly));
+      }
+
+      // Cria saldo inicial no warehouse padrao
+      const initialQty = parseFloat(String(formData.get('initial_qty') ?? '0')) || 0;
+      if (initialQty > 0) {
+        const { data: warehouse } = await admin
+          .from('warehouses')
+          .select('id')
+          .eq('tenant_id', tenant.id)
+          .limit(1)
+          .single();
+        if (warehouse) {
+          await admin.from('stock_balances').insert({
             tenant_id: tenant.id,
             warehouse_id: warehouse.id,
             part_id: part.id,
-            kind: 'entrada_nf',
             qty: initialQty,
-            unit_cost: avgCost,
-            note: 'Estoque inicial',
           });
+          if (avgCost > 0) {
+            await admin.from('stock_moves').insert({
+              tenant_id: tenant.id,
+              warehouse_id: warehouse.id,
+              part_id: part.id,
+              kind: 'entrada_nf',
+              qty: initialQty,
+              unit_cost: avgCost,
+              note: 'Estoque inicial',
+            });
+          }
         }
       }
-    }
 
-    redirect('/app/estoque');
+      redirect('/app/estoque');
+    } catch (err) {
+      if (err && typeof err === 'object' && 'digest' in err && String((err as any).digest).startsWith('NEXT_REDIRECT')) {
+        throw err;
+      }
+      console.error('Erro inesperado ao criar peca:', err);
+      redirect('/app/estoque/novo?error=' + encodeURIComponent('Erro inesperado ao criar peça. Tente novamente.'));
+    }
   }
 
   return (
     <div className="mx-auto max-w-2xl p-6">
       <h1 className="text-2xl font-bold text-slate-900">Nova peca</h1>
+
+      {errorMessage && (
+        <div className="mt-4 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" />
+          {errorMessage}
+        </div>
+      )}
 
       <form action={create} className="mt-6 space-y-4">
         <div className="grid grid-cols-2 gap-3">
