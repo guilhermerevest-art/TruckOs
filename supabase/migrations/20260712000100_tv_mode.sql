@@ -16,7 +16,7 @@ language plpgsql
 as $$
 begin
   if new.tv_token is null then
-    new.tv_token := encode(gen_random_bytes(16), 'hex');
+    new.tv_token := encode(extensions.gen_random_bytes(16), 'hex');
   end if;
   return new;
 end;
@@ -28,7 +28,7 @@ create trigger trg_tenants_tv_token
   for each row execute function public.set_tenant_tv_token();
 
 -- backfill de tenants existentes
-update public.tenants set tv_token = encode(gen_random_bytes(16), 'hex') where tv_token is null;
+update public.tenants set tv_token = encode(extensions.gen_random_bytes(16), 'hex') where tv_token is null;
 
 -- ---------------------------------------------------------------------
 -- 2. tenant_members.display_name — nome exibido na TV (nao expor e-mail
@@ -161,7 +161,7 @@ begin
     raise exception 'forbidden';
   end if;
 
-  v_new_token := encode(gen_random_bytes(16), 'hex');
+  v_new_token := encode(extensions.gen_random_bytes(16), 'hex');
   update public.tenants set tv_token = v_new_token where id = v_tenant_id;
   return v_new_token;
 end;

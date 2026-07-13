@@ -58,7 +58,7 @@ create trigger trg_payables_updated_at
 create table public.commissions (
   id uuid primary key default gen_random_uuid(),
   tenant_id uuid not null references public.tenants(id) on delete cascade,
-  member_id uuid references public.tenant_members(user_id) on delete set null,
+  member_id uuid references auth.users(id) on delete set null,
   work_order_id uuid references public.work_orders(id) on delete set null,
   period date not null,
   base text not null check (base in ('mao_de_obra','venda')),
